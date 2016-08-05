@@ -1,5 +1,7 @@
 {
   "CorePlugins": [
+    "com.phonegap.plugins.barcodescanner@5.0.1",
+    "com.telerik.plugins.wkwebview@0.6.9",
     "cordova-plugin-battery-status",
     "cordova-plugin-camera",
     "cordova-plugin-console",

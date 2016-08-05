@@ -1,42 +1,527 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
+<!DOCTYPE html>
 <html>
+
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World!</title>
+        <title>BMS Movil</title>
+        <!-- META -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+        <meta name="descripcion" content="BMS app">
+        <meta name="author" content="BM Systems">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta charset="UTF-8">
+        <!-- LIBs -->
+        <script src="lib/jquery-1.9.1.min.js"></script>
+        <script src="lib/jquery.mobile-1.4.5.min.js"></script>
+        <script src="lib/numeral.min.js"></script>
+        <script src="lib/fastclick.js"></script>
+        <script src="barcodescanner.js"></script>
+        <script src="lib/responsive-tables.js" href="responsive-tables.js"></script>
+
+        <script src="lib/funciones.js"></script>
+        <script src="lib/eventos.js"></script>
+        <script src="cordova.js"></script>
+        <!-- Styles -->
+        <link rel="stylesheet" href="css/responsive-tables.css">
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+        <link href="css/style.css" rel="stylesheet">
+        <link rel="apple-touch-icon" href="apple-touch-icon-114x114-precomposed.png" />
+
     </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
+    <!-- Primer pagina con el login -->
+
+    <body style="background-image:url(img/hoffman.png)" onload="onBodyLoad()">
+
+        <div data-role="page" id="Login" data-title="Login">
+            <div data-role="header" data-position="fixed">
+                <h1>BMS Movil</h1>
+                <a id="Login_btnConfig" data-role="button" data-icon="gear" data-iconpos="notext" data-theme="b" data-ajax="false">Configuración</a>
+            </div>
+            <div data-role="content">
+                <img id="BMSlogo" src="img/ic_launcher-web.png" style="display: block; margin: 0 auto">
+                <div data-role="fieldcontain">
+                    <label for="text1">Usuario</label>
+                    <input type="text" id="text1" placeholder="Usuario">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="text2">Clave</label>
+                    <input type="password" id="text2" placeholder="Clave">
+                </div>
+                <a data-role="button" type="sumbit" id="Login_btnIniciar"  data-transition="fade" data-ajax="false" >Iniciar sesion</a>
+            </div>
+            <div data-role="footer" data-position="fixed">
+                <h4>BMS Móvil© 2014</h4>
             </div>
         </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            app.initialize();
-        </script>
+        <!--  Pagina: Configuración   -->
+        <div data-role="page"  id="config" data-title="Configuración" data-close-btn="none">
+            <div data-role="header" data-position="fixed">
+                <h1>Configuración</h1>
+            </div>
+            <div data-role="content">
+
+                <div data-role="fieldcontain">
+                    <label for="config_servidor">Servidor</label>
+                    <input type="text" id="config_servidor" placeholder="Servidor">
+                </div>
+
+                <a data-role="button" id="config_btnProbar" data-ajax="false">Probar conexión</a>
+                <a data-role="button" id="config_btnGuardar" data-ajax="false">Guardar</a>
+                <a data-role='button' id="config_btnCerrar" data-theme='b' data-ajax="false">Cerrar</a>
+            </div>
+        </div>
+        <!-- Página: Selector de establecimiento -->
+        <div data-role="page" id="selector_estab" data-title="Seleccione establecemiento">
+            <div data-role="header" data-position="fixed">
+                <h1>Establecimientos</h1>
+                <a data-role="button" id="selector_estab_BtnSalir" class="confirma" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Salir</a>
+                <a data-role="button" id="selector_estab_BtnContinuar" data-icon="arrow-r" data-iconpos="right" data-theme="b" data-transition="fade" data-ajax="false">Continuar</a>
+            </div>
+            <div data-role="content">
+                <div id="establecimientos" data-role="content">
+                    <em>Seleccione el establecimiento</em>
+                    <br/>
+                    <select id="selector_estab_listaEstab" data-native-menu="true">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!--  Pagina: Selector pedido o cobranza  -->
+        <div data-role="page" id="selectorTipo" data-title="Selector">
+            <div data-role="header" data-position="fixed">
+                <h1>Seleccione</h1>
+                <a id ="selectorTipo_btnAtras" data-role="button" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <div class="content-primary">
+                    <ul data-role="listview" id="selectorTipo_listaTipo">
+                        <li data-name="pedido">
+                            <a id = "selectorTipo_btnPedido" data-transition="fade">
+                                <img src="img/document_128x128.png" />
+                                <h3>Iniciar Pedido</h3>
+                                <p></p>
+                            </a>
+                        </li>
+                        <li data-name="cobranza" data-transition="fade">
+                            <a id= "selectorTipo_btnCobranza">
+                                <img src="img/money_128x128.png" />
+                                <h3>Iniciar Cobranza</h3>
+                                <p></p>
+                            </a>
+                        </li>
+                        <li data-name="reporte" data-transition="fade">
+                            <a id= "selectorTipo_btnReporte">
+                                <img src="img/report_256x256.png" />
+                                <h3>Reporte de pedidos</h3>
+                                <p></p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!--/content-primary -->
+            </div>
+            <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                    <ul>
+                        <li>
+                            <a onclick="salir()" data-iconpos="top" data-icon="home">Salir</a>
+                        </li>
+                    </ul>
+                </div><!-- /navbar -->
+            </div><!-- /footer -->
+        </div>
+        <!-- Página: Pedido -->
+        <div data-role="page" id="pedido" data-title="Pedido">
+            <div data-role="header" data-position="fixed">
+                <h1>Nuevo pedido</h1>
+                <a data-role="button" id="pedido_btnAtras" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <a id = "pedido_btnCliente" data-role="button" data-inline="false" data-theme="b" data-icon="plus" data-iconpos="left" data-mini="true" data-transition="fade">Seleccionar cliente</a>
+                </div>
+                <div data-role="fieldcontain">
+                    <!--<input type="text" id="pedido_txtProducto" placeholder="Añadir producto">-->
+                    <a data-role="button" id="Pedido_btnAgregarProducto" data-inline="false" data-theme="b" data-icon="plus" data-iconpos="left" data-mini="true">Agregar productos</a>
+                </div>
+                <a data-role="button" id="pedido_btnDetalle" data-mini="false" data-corners="false" data-theme="e" data-ajax="false">Detalle</a>
+                <!--<span id="pedido_dtpFecha">Fecha</span>-->
+                <div data-role="fieldcontain">
+                    <label for="pedido_txtCliente">Cliente</label>
+                    <input type="text" id="pedido_txtCliente" placeholder="" readonly="readonly">
+                </div>
+                <label for="pedido_CondDistrib">Cond. Distribución</label>
+                <select id="pedido_CondDistrib"  onfocus="this.selectedindex = -1;" data-native-menu="true">
+                </select>
+                <div data-role="fieldcontain">
+                    <label for="pedido_dtpFecha">Fecha de entrega</label>
+                    <input type="date" id="pedido_dtpFecha">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="pedido_txtNotas">Notas</label>
+                    <input type="text" id="pedido_txtNotas" placeholder="Notas..">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="pedido_txtImporte">Importe</label>
+                    <input type="text" id="pedido_txtImporte" readonly="readonly">
+
+                    <label for="pedido_txtIva">IVA</label>
+                    <input type="text" id="pedido_txtIva" readonly="readonly">
+
+                    <label for="pedido_txtTotal">Total</label>
+                    <input type="text" id="pedido_txtTotal" readonly="readonly">
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a class="ui-btn-text" data-role="button" id="Pedido_btnGuardaPedido" data-icon="check" data-theme="b" data-ajax="false">Pedido</a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a class="ui-btn-text" data-role="button" id="Pedido_btnGuardaCotiz" data-icon="check" data-theme="b" data-ajax="false">Cotización</a>
+                    </div>
+                </div>
+                <div class="ui-grid-solo">
+                    <div class="ui-block-a">
+                        <a class="ui-btn-text" data-role="button" id="Pedido_btnCancelaPedido" data-theme="a" data-icon="delete" data-ajax="false">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pagina: clienteDetalle -->
+        <div data-role="page" id="clienteDetalle" data-title="Cliente detalle">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Cliente</h3>
+                <a id="clienteDetalle_btnAtras" data-role="button" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain" align="right">
+                    <a data-role="button" id="clienteDetalle_btnScan" data-inline="false" data-theme="d" data-icon="search" data-iconpos="left" data-mini="false" data-ajax="false">Scanear</a>
+                    <a id="clienteDetalle_btnBuscar" data-transition="fade" data-ajax="false">
+                        <label for="clienteDetalle_txtCliente"></label>
+                        <input type="text" id="clienteDetalle_txtCliente" placeholder="Buscar cliente..">
+                    </a>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="clienteDetalle_txtCodCte">Cliente</label>
+                    <input type="text" id="clienteDetalle_txtCodCte" tabindex=1>
+                    <label for="listaSucursales">Sucursal</label>
+                    <select id="listaSucursales" data-native-menu="true">
+                    </select>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="clienteDetalle_txtLPV">LPV</label>
+                    <input type="text" id="clienteDetalle_txtLPV" readonly="readonly">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="clienteDetalle_listaCondiciones">Cond. pago</label>
+                    <select id="clienteDetalle_listaCondiciones" data-native-menu="true">
+                    </select>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="clienteDetalle_txtSaldo">Saldo</label>
+                    <input type="text" id="clienteDetalle_txtSaldo" readonly="readonly">
+                    <a data-role="button" id= "clienteDetalle_btnCartera" data-theme="c" data-transition="fade">Cartera</a>
+                </div>
+                <div>
+                    <a data-role="button" id="clienteDetalle_btnAceptar" data-theme="b" data-transition="fade">Aceptar</a>
+                </div>
+
+            </div>
+        </div>
+        <!-- Pagina: buscaCliente -->
+        <div data-role="page" id="buscaCliente" data-title="Buscar clientes">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Clientes</h3>
+                <a data-role="button" id="buscaCliente_btnAtras" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content" style="position:fixed;top:30px;right:5px;" align="right">
+
+            </div>
+            <div data-role="content" style="width=80%">
+                <ul id="autocompleteCtes" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Buscar por nombre de cliente..." data-filter-theme="a"></ul>
+
+            </div>
+        </div>
+        <!-- BuscaProducto -->
+        <div data-role="page" id="buscaProducto" data-title="Buscar productos">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Productos</h3>
+                <a id="buscaProducto_btnAtras" data-role="button" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <ul id="autocompleteProds" data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Buscar por nombre de producto..." data-filter-theme="d" data-transition="fade" ></ul>
+            </div>
+        </div>
+        <!-- Pagina: Productos -->
+        <div data-role="page" id="productos" data-title="Productos">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Productos</h3>
+                <a id="productos_btnAtras" data-role="button" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+                <a id="productos_btnInventario" data-role="button" data-theme="b" data-transition="fade" data-ajax="false">Inventario</a>
+            </div>
+            <div data-role="content">
+                <a data-role="button" id="productos_btnScan" data-inline="false" data-theme="d" data-icon="search" data-iconpos="left" data-mini="false" data-ajax="false">Scanear</a>
+                <a data-role="button" id="productos_btnBuscar" data-inline="false" data-theme="b" data-icon="search" data-iconpos="left" data-mini="true" data-transition="fade" data-ajax="false">Buscar producto</a>
+                <div data-role="fieldcontain">
+                    <label for="productos_txtProducto">Producto</label>
+                    <input type="text" id="productos_txtProducto" tabindex=1>
+                    <label for="productos_txtEstab">Establecimiento</label>
+                    <input type="text" id="productos_txtEstab" tabindex=2 readonly="readonly">
+                </div>
+
+                <div data-role="fieldcontain">
+                    <label for="productos_listaUnidad">Unidad</label>
+                    <select id="productos_listaUnidad" data-native-menu="true" >
+                    </select>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="productos_txtCantidad">Cantidad</label>
+                    <input type="tel" id="productos_txtCantidad" tabindex=3>
+
+                    <label for="productos_txtPeso">Peso</label>
+                    <input type="text" id="productos_txtPeso" readonly="readonly">
+
+                    <label for="productos_txtVolumen">Volumen</label>
+                    <input type="text" id="productos_txtVolumen" readonly="readonly">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="productos_txtPrecioUni">Precio/u</label>
+                    <input type="text" id="productos_txtPrecioUni" tabindex=4>
+                </div>
+                <div data-role="fieldcontain">
+
+                    <label for="productos_txtTotal">Total</label>
+                    <input type="text" id="productos_txtTotal" readonly="readonly">
+
+                    <label for="productos_txtIva">IVA</label>
+                    <input type="text" id="productos_txtIva" readonly="readonly">
+
+                    <label for="productos_txtImporte">Importe</label>
+                    <input type="text" id="productos_txtImporte" readonly="readonly">
+
+                </div>
+                <div id="productos_infadicional" data-role="collapsibleset" data-content-theme="a" data-iconpos="right">
+                    
+                </div>
+                <div class="ui-btn">
+                    <a data-role="button" id="productos_btnFT" data-inline="false" data-theme="d" data-icon="check" data-iconpos="left" data-mini="false" data-ajax="false">Ficha técnica</a>
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a class="ui-btn-text" data-role="button" id="productos_btnAgregaProducto" data-inline="true" data-icon="plus" data-theme="b" data-ajax="false">Agregar</a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a class="ui-btn-text" data-role="button" id="productos_btnCancelaProducto" data-inline="true" data-icon="delete" data-ajax="false">Limpiar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagina: productosEditar -->
+        <div data-role="page" id="productosEditar" data-title="Modificar Producto">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Modificar Producto</h3>
+                <a id="productosEditar_btnAtras" data-role="button" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+                <a id="productosEditar_btnInventario" data-role="button" data-theme="b" data-transition="fade" data-ajax="false">Inventario</a>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <label for="productosEditar_txtProducto">Producto</label>
+                    <input type="text" id="productosEditar_txtProducto" readonly="readonly">
+                    <label for="productosEditar_txtEstab">Establecimiento</label>
+                    <input type="text" id="productosEditar_txtEstab" readonly="readonly">
+                </div>
+
+                <div data-role="fieldcontain">
+                    <label for="productosEditar_listaUnidad">Unidad</label>
+                    <select id="productosEditar_listaUnidad" data-native-menu="true">
+                    </select>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="productosEditar_txtCantidad">Cantidad</label>
+                    <input type="text" id="productosEditar_txtCantidad">
+
+                    <label for="productosEditar_txtPeso">Peso</label>
+                    <input type="text" id="productosEditar_txtPeso" readonly="readonly">
+
+                    <label for="productosEditar_txtVolumen">Volumen</label>
+                    <input type="text" id="productosEditar_txtVolumen" readonly="readonly">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="productosEditar_txtPrecioUni">Precio/u</label>
+                    <input type="text" id="productosEditar_txtPrecioUni">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="productosEditar_txtImporte">Importe</label>
+                    <input type="text" id="productosEditar_txtImporte" readonly="readonly">
+
+                    <label for="productosEditar_txtIva">IVA</label>
+                    <input type="text" id="productosEditar_txtIva" readonly="readonly">
+
+                    <label for="productosEditar_txtTotal">Total</label>
+                    <input type="text" id="productosEditar_txtTotal" readonly="readonly">
+                </div>
+                <div class="ui-btn">
+                    <a data-role="button" id="productosEditar_btnFT" data-inline="false" data-theme="d" data-icon="check" data-iconpos="left" data-mini="false" data-ajax="false">Ficha técnica</a>
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+
+                        <a class="ui-btn-text" data-role="button" id="productosEditar_btnAgregaProducto" data-inline="true" data-icon="plus" data-theme="b" data-ajax="false">Aceptar</a>
+
+                    </div>
+                    <div class="ui-block-b">
+
+                        <a class="ui-btn-text" data-role="button" id="productosEditar_btnCancelaProducto" data-inline="true" data-icon="delete" data-ajax="false">Cancelar</a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- SWIPE LIST -->
+        <div data-role="page" id="pedidoDetalle" data-title="Detalle" data-url="pedidoDetalle">
+            <div data-role="header" data-position="fixed">
+                <h1>Detalle</h1>
+                <a id ="pedidoDetalle_btnAtras" data-icon="arrow-l" data-iconpos="left" data-ajax="false">Pedido</a>
+            </div><!-- /header -->
+            <div data-role="content">
+                <ul id="list" class="touch" data-role="listview" data-icon="false" data-split-icon="delete">
+                </ul>
+            </div><!-- /content -->
+            <div data-role="controlgroup" id="pedidoDetalle_btnGrupo" data-type="horizontal">
+                <a data-role="button" id="pedidoDetalle_btnBorraTodos" data-theme="e">Eliminar todos</a>
+            </div>
+            <div id="confirm" class="ui-content" data-role="popup" data-theme="none" data-history="false">
+                <p id="question">Por favor seleccione una opción:</p>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a id="yes" data-role="button" data-mini="true" data-shadow="false" data-ajax="false">Eliminar</a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a id="cancel" data-role="button" data-mini="true" data-shadow="false" data-ajax="false">Editar</a>
+                    </div>
+                </div>
+            </div><!-- /popup -->
+            <div data-role="footer" data-position="fixed">
+                <div id="detalle_tablaTotales" class="ui-grid-a">
+                    <div class="ui-block-a">Total importe:</div>
+                    <div id="pedidoDetalle_totalImporte" class="ui-block-b"></div>
+                    <div class="ui-block-a">Total IVA:</div>
+                    <div id="pedidoDetalle_totalIva"class="ui-block-b"></div>
+                    <div class="ui-block-a">Total:</div>
+                    <div id="pedidoDetalle_Total"class="ui-block-b"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagina: inventario -->
+        <div data-role="page" id="inventario" data-title="Inventario" data-content-theme="c">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Inventario</h3>
+                <a data-role="button" id ="inventario_btnAtras"  data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <ul id="inventario_list" data-role="listview" data-icon="false" >
+                </ul>
+            </div>
+        </div>
+
+        <!-- Pagina: inventarioEditar -->
+        <div data-role="page" id="inventarioEditar" data-title="Inventario" data-content-theme="c">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Inventario</h3>
+                <a data-role="button" id="inventarioEditar_btnAtras" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <ul id="inventarioEditar_list" data-role="listview" data-icon="false" >
+                </ul>
+            </div>
+        </div>
+        <!-- Pagina: reporte -->
+        <div data-role="page" id="reporte" data-title="Reporte" data-content-theme="c">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Reporte</h3>
+                <a data-role="button" id ="reporte_btnAtras" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <table id="reporteTabla" >
+
+                </table>
+            </div>
+        </div>
+        <!-- Pagina: reporte_Filtro -->
+        <div data-role="page" id="reporteFiltro" data-title="Filtrar reporte" data-content-theme="c">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Filtrar reporte</h3>
+                <a data-role="button" id="reporteFiltro_btnAtras" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <label for="reporteFiltro_txtUsuarioNombre">Usuario:</label>
+                    <input type="text" id="reporteFiltro_txtUsuarioNombre" readonly="readonly">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="reporteFiltro_dtpDe">De:</label>
+                    <input type="date" id="reporteFiltro_dtpDe">
+
+                    <label for="reporteFiltro_dtpA">A:</label>
+                    <input type="date" id="reporteFiltro_dtpA">
+                </div>
+                <a data-role="button" id="reporteFiltro_btnActualizar" data-theme="b" data-ajax="false">Mostrar reporte</a>
+            </div>
+        </div>
+        <!-- Segunda pagina con la sesion ya iniciada -->
+        <div data-role="page" id="detalle" data-title="Bienvenido">
+            <div data-role="header" data-position="fixed">
+                <h1>Inicio</h1>
+                <a data-role="button" id="detalle_btnSalir" class="ui-btn-right" data-rel="page" data-transition="slidedown" data-ajax="false">Salir</a>
+            </div>
+            <div data-role="content">
+            </div>
+        </div>
+        <!-- Pagina para fichas tecnicas -->
+        <div data-role="page" id="fichasTec" data-title="Ficha técnica" data-content-theme="c">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Ficha técnica</h3>
+                <a data-role="button" id="fichasTec_btnAtras" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div data-role="content">
+                <div id="fichasTec_list" data-role="fieldcontain">
+                </div>
+                <input type="hidden" id ="fichasTec_pagina" value="">
+            </div>
+        </div>
+        <!-- Pagina Autorizacion remota -->
+        <div data-role="page"  id="AutRemota" data-title="Autorizacion" data-close-btn="none">
+            <div data-role="header" data-position="fixed">
+                <h1>Autorización remota</h1>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain"  id="AutRemota_radios" class="radiogroup">
+                    <fieldset id="AutRemota_Usuarios" data-role="controlgroup">
+                    </fieldset>
+                </div>
+                <a data-role="button" id="AutRemota_btnAutRemota" onclick="autorizacionRemota()" data-ajax="false">Pedir autorización</a>
+                <a data-role="button" id="AutRemota_btnVerificar" onclick="verificarAutRemota()" data-icon="check" data-ajax="false">Verificar</a>
+                <a data-role="button" id="AutRemota_btnCerrar" onclick ="cerrarAutRemota()" data-theme='b' data-ajax="false">Cerrar</a>
+            </div>
+        </div>
+        <!-- Pagina Cartera -->
+        <div data-role="page"  id="CarteraCte" data-title="Cartera de cliente" data-content-theme="c">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Cartera del cliente</h3>
+                <a data-role="button" id="CarteraCte_btnAtras" data-icon="arrow-l" data-iconpos="left" data-theme="a" data-transition="fade" data-ajax="false">Atras</a>
+            </div>
+            <div id="CarteraCte_Contenido" data-role="content">
+                <table data-role="table" data-mode="columntoggle" class="ui-responsive" id="CarteraCte_Tabla">
+
+                </table>
+            </div>
+        </div>
+        <div id="modal">
+            <!-- Place at bottom of page -->
+        </div>
     </body>
+
 </html>
